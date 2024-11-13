@@ -1,12 +1,13 @@
 package io.spring.batch.hello_world.chapter04;
 
+import java.util.Arrays;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.CompositeJobParametersValidator;
+import org.springframework.batch.core.job.DefaultJobParametersValidator;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -17,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-public class JobParameterAccess {
+public class JobParameterValidatorJob {
 
     @Autowired
     private JobRepository jobRepository;
@@ -25,46 +26,49 @@ public class JobParameterAccess {
     private PlatformTransactionManager transactionManager;
 
     @Bean
+    public CompositeJobParametersValidator validator() {
+        CompositeJobParametersValidator validator = new CompositeJobParametersValidator();
+
+        DefaultJobParametersValidator defaultJobParametersValidator = new DefaultJobParametersValidator();
+        defaultJobParametersValidator.setRequiredKeys(new String[] {"fileName"});
+        defaultJobParametersValidator.setOptionalKeys(new String[] {"name"});
+        defaultJobParametersValidator.afterPropertiesSet();
+
+        validator.setValidators(
+                Arrays.asList(new JobParameterValidator(), defaultJobParametersValidator));
+
+        return validator;
+    }
+
+    @Bean
     public Job job() {
-        return new JobBuilder("jobParameterAccessJob", jobRepository)
+        return new JobBuilder("jobParameterValidatorJob", jobRepository)
+                .validator(validator())
                 .start(step())
-                .next(step1())
                 .build();
     }
 
     @Bean
     public Step step() {
-        return new StepBuilder("step", jobRepository)
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
-                            throws Exception {
-                        String name = (String) chunkContext.getStepContext()
-                                .getJobParameters()
-                                .get("name");
-
-                        System.out.println(String.format("param: %s", name));
-                        return RepeatStatus.FINISHED;
-                    }
-                }, transactionManager).build();
-    }
-
-    @Bean
-    public Step step1() {
         return new StepBuilder("step1", jobRepository)
-                .tasklet(helloWorldTasklet(null), transactionManager)
+                .tasklet(helloWorldTasklet(null, null), transactionManager)
                 .build();
     }
 
     @StepScope
     @Bean
     public Tasklet helloWorldTasklet(
-            @Value("#{jobParameters['name']}") String name){
+            @Value("#{jobParameters['name']}") String name,
+            @Value("#{jobParameters['fileName']}") String fileName){
         return (contribution, chunkContext) -> {
             System.out.println(
-                    String.format("Hello, %s!", name));
+                    String.format("name = %s!", name));
+
+            System.out.println(
+                    String.format("fileName = %s!", fileName));
             return RepeatStatus.FINISHED;
         };
     }
 }
+
 
