@@ -7,5 +7,5 @@ spring:
   batch:
     jdbc:
       initialize-schema: always
-
-#  spring.batch.job.names=conditionalStepLogicJob
+    job:
+      names: jobParameterAccessJob
