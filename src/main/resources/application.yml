@@ -8,4 +8,4 @@ spring:
     jdbc:
       initialize-schema: always
     job:
-      names: JobLoggerListenerJob
+      names: ExecutionContextJob
