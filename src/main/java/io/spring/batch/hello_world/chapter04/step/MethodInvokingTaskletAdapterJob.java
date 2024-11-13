@@ -20,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * 다른 클래스 내의 메서드를 잡 내의 태스크릿처럼 실행하고 싶을 때 사용한다.
  */
 
-@Configuration
+//@Configuration
 public class MethodInvokingTaskletAdapterJob {
     @Autowired
     private JobRepository jobRepository;

@@ -2,7 +2,7 @@ package io.spring.batch.hello_world.chapter04.step;
 
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class CustomerService {
 
     public void serviceMethod(){
