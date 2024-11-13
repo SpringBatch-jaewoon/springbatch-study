@@ -24,7 +24,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * 그러므로 해당 스텝이 완료될 때까지 플로우 내의 다른 스텝은 실행되지 않는다.
  */
 
-@Configuration
+//@Configuration
 public class CallableTaskletAdapterJob {
 
     @Autowired
