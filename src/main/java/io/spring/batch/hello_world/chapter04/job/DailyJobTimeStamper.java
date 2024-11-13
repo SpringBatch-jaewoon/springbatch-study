@@ -1,4 +1,4 @@
-package io.spring.batch.hello_world.chapter04;
+package io.spring.batch.hello_world.chapter04.job;
 
 import java.util.Date;
 import org.springframework.batch.core.JobParameters;
