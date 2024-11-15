@@ -1,28 +1,41 @@
 package io.spring.batch.hello_world;
 
-import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class ServerDBConfig {
-    @Bean("serverDb")
-    public DataSource serverDb() {
-        DataSourceBuilder builder = DataSourceBuilder.create();
-        builder.type(HikariDataSource.class);
-        builder.driverClassName("com.mysql.cj.jdbc.Driver");
-        builder.username("root");
-        builder.password("1234");
-        builder.url("jdbc:mysql://localhost:3306/serverDb?serverTimezone=Asia/Seoul&useSSL=false");
-        return builder.build();
+
+    @Qualifier("serverDatasource")
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.server1")
+    public DataSource serverDatasource(){
+        return DataSourceBuilder.create().build();
     }
 
-    @Bean("workTr")
-    protected PlatformTransactionManager workTransactionManager() {
-        return new DataSourceTransactionManager(serverDb());
+    @Qualifier("serverJdbcTemplate")
+    @Bean
+    public JdbcTemplate serverJdbcTemplate(@Qualifier("serverDatasource") DataSource serverDatasource){
+        return new JdbcTemplate(serverDatasource);
     }
+
+//    @Bean("serverDb")
+//    public DataSource serverDb() {
+//        HikariDataSource dataSource = new HikariDataSource();
+//        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("1234");
+//        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/server?serverTimezone=Asia/Seoul&useSSL=false");
+//        return dataSource;
+//    }
+
+//    @Bean("workTr")
+//    protected PlatformTransactionManager workTransactionManager() {
+//        return new DataSourceTransactionManager(serverDatasource());
+//    }
 }

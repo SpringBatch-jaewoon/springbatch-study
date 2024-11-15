@@ -3,7 +3,6 @@ package io.spring.batch.hello_world;
 import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
-import org.springframework.batch.core.configuration.BatchConfigurationException;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -16,6 +15,7 @@ import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -47,29 +47,42 @@ public class BatchConfig extends DefaultBatchConfiguration {
         return runner;
     }
 
+//    @Primary
+//    @Bean("batchDb")
+//    @ConfigurationProperties(prefix = "spring.datasource.batch")
+//    public DataSource dataSource(){
+//        HikariDataSource build = DataSourceBuilder.create().type(HikariDataSource.class).build();
+//        return build;
+//    }
 
     @Primary
-    @Bean("dataSource")
-    public DataSource batchDB(){
+    @Bean("batchDb")
+    public DataSource dataSource(){
         DataSourceBuilder builder = DataSourceBuilder.create();
         builder.type(HikariDataSource.class);
         builder.driverClassName("com.mysql.cj.jdbc.Driver");
         builder.username("root");
         builder.password("1234");
-        builder.url("jdbc:mysql://localhost:3306/spring_batch?serverTimezone=Asia/Seoul&useSSL=false");
+        builder.url("jdbc:mysql://localhost:3306/batch?serverTimezone=Asia/Seoul&useSSL=false");
         return builder.build();
+    }
+
+
+    @Override
+    protected DataSource getDataSource() {
+        return dataSource();
     }
 
     @Primary
     @Bean("transactionManager")
     protected PlatformTransactionManager getTransactionManager() {
-        return new DataSourceTransactionManager(batchDB());
+        return new DataSourceTransactionManager(dataSource());
     }
 
-    @Override
-    public JobExplorer jobExplorer() throws BatchConfigurationException {
-        return super.jobExplorer();
-    }
+//    @Override
+//    public JobExplorer jobExplorer() throws BatchConfigurationException {
+//        return super.jobExplorer();
+//    }
 
     @SneakyThrows
     @Override
@@ -78,7 +91,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
         factoryBean.setDatabaseType(DatabaseType.MYSQL.getProductName());
 //        factoryBean.setTablePrefix("B_");
         factoryBean.setIsolationLevelForCreateEnum(Isolation.REPEATABLE_READ);
-        factoryBean.setDataSource(batchDB());
+        factoryBean.setDataSource(dataSource());
         factoryBean.setTransactionManager(getTransactionManager());
         factoryBean.afterPropertiesSet();
         return factoryBean.getObject();
