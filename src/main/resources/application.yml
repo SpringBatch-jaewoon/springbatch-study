@@ -1,11 +1,18 @@
 spring:
   datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/spring_batch?serverTimezone=Asia/Seoul&useSSL=false
-    username: root
-    password: 1234
+    serverDb:
+      driverClassName: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/serverDb?serverTimezone=Asia/Seoul&useSSL=false
+      username: root
+      password: 1234
+    spring_batch:
+      driverClassName: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/spring_batch?serverTimezone=Asia/Seoul&useSSL=false
+      username: root
+      password: 1234
   batch:
     jdbc:
       initialize-schema: always
     job:
-      names: stepFlowJob
+      name: stepFlowJob
+      enabled: true
