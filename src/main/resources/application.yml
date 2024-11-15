@@ -14,5 +14,5 @@ spring:
     jdbc:
       initialize-schema: always
     job:
-      name: stepFlowJob
+      name: JobExplorerJob
       enabled: true
