@@ -16,4 +16,4 @@ spring:
       initialize-schema: always
     job:
       name: JobExplorerJob
-      enabled: true
+      enabled: false
