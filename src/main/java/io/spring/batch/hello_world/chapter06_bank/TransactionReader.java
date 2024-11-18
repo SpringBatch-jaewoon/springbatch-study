@@ -1,14 +1,11 @@
 package io.spring.batch.hello_world.chapter06_bank;
 
-import io.spring.batch.hello_world.chapter06_bank.domain.Transaction;
-import org.springframework.batch.core.ExitStatus;
+import io.spring.batch.hello_world.domain.Transaction;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.annotation.AfterStep;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.ItemStreamReader;
-import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.file.transform.FieldSet;
 
 public class TransactionReader implements ItemStreamReader<Transaction> {

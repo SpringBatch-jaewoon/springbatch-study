@@ -1,7 +1,7 @@
 package io.spring.batch.hello_world.chapter07_reader.FlatFileItemReader;
 
 import io.spring.batch.hello_world.chapter04.job.JobLoggerListener;
-import io.spring.batch.hello_world.chapter07_reader.Customer;
+import io.spring.batch.hello_world.domain.Customer;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -12,7 +12,6 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.item.file.transform.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,6 +1,6 @@
 package io.spring.batch.hello_world.chapter06_bank;
 
-import io.spring.batch.hello_world.chapter06_bank.domain.Transaction;
+import io.spring.batch.hello_world.domain.Transaction;
 import java.util.List;
 import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;

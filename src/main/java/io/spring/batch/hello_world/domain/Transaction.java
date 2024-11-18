@@ -1,4 +1,4 @@
-package io.spring.batch.hello_world.chapter06_bank.domain;
+package io.spring.batch.hello_world.domain;
 
 import java.util.Date;
 

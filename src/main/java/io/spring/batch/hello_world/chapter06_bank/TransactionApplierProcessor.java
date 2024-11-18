@@ -1,7 +1,7 @@
 package io.spring.batch.hello_world.chapter06_bank;
 
-import io.spring.batch.hello_world.chapter06_bank.domain.AccountSummary;
-import io.spring.batch.hello_world.chapter06_bank.domain.Transaction;
+import io.spring.batch.hello_world.domain.AccountSummary;
+import io.spring.batch.hello_world.domain.Transaction;
 import java.util.List;
 import org.springframework.batch.item.ItemProcessor;
 

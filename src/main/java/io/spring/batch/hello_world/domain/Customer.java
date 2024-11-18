@@ -1,4 +1,4 @@
-package io.spring.batch.hello_world.chapter07_reader;
+package io.spring.batch.hello_world.domain;
 
 import lombok.Getter;
 import lombok.Setter;

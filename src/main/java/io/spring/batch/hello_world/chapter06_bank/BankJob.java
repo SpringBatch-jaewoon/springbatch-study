@@ -1,14 +1,13 @@
 package io.spring.batch.hello_world.chapter06_bank;
 
 import io.spring.batch.hello_world.chapter04.job.JobLoggerListener;
-import io.spring.batch.hello_world.chapter06_bank.domain.AccountSummary;
-import io.spring.batch.hello_world.chapter06_bank.domain.Transaction;
+import io.spring.batch.hello_world.domain.AccountSummary;
+import io.spring.batch.hello_world.domain.Transaction;
 import javax.sql.DataSource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.listener.JobListenerFactoryBean;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -30,11 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.WritableResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 //@Configuration
