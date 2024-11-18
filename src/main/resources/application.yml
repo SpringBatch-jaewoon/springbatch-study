@@ -15,5 +15,5 @@ spring:
     jdbc:
       initialize-schema: always
     job:
-      name: DelimitedJob
+      name: MultiFormatJob
       enabled: true

@@ -1,35 +1,25 @@
 package io.spring.batch.hello_world.domain;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Transaction {
     private String accountNumber;
-
-    private Date timestamp;
-
+    private Date transactionDate;
     private double amount;
+//    private DateFormat formatter = new SimpleDateFormat("MM/dd/YYYY");
 
-    public String getAccountNumber() {
-        return accountNumber;
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "accountNumber='" + accountNumber + '\'' +
+                ", transactionDate=" + transactionDate +
+                ", amount=" + amount +
+                '}';
     }
-
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-    }
+}

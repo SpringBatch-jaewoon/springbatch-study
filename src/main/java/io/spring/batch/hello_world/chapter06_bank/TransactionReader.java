@@ -35,7 +35,7 @@ public class TransactionReader implements ItemStreamReader<Transaction> {
             if(fieldSet.getFieldCount() > 1) {
                 result = new Transaction();
                 result.setAccountNumber(fieldSet.readString(0));
-                result.setTimestamp(
+                result.setTransactionDate(
                         fieldSet.readDate(1, "yyyy-MM-DD HH:mm:ss"));
                 result.setAmount(fieldSet.readDouble(2));
 
