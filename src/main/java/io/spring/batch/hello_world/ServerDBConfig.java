@@ -18,11 +18,11 @@ public class ServerDBConfig {
         return DataSourceBuilder.create().build();
     }
 
-    @Qualifier("serverJdbcTemplate")
-    @Bean
-    public JdbcTemplate serverJdbcTemplate(@Qualifier("serverDatasource") DataSource serverDatasource){
-        return new JdbcTemplate(serverDatasource);
-    }
+//    @Qualifier("serverJdbcTemplate")
+//    @Bean
+//    public JdbcTemplate serverJdbcTemplate(@Qualifier("serverDatasource") DataSource serverDatasource){
+//        return new JdbcTemplate(serverDatasource);
+//    }
 
 //    @Bean("serverDb")
 //    public DataSource serverDb() {

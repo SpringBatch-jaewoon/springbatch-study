@@ -15,5 +15,5 @@ spring:
     jdbc:
       initialize-schema: always
     job:
-      name: JobExplorerJob
-      enabled: false
+      name: BankJob
+      enabled: true
