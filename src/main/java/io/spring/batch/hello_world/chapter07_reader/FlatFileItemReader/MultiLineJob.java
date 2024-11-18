@@ -11,6 +11,7 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.listener.JobListenerFactoryBean;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
@@ -26,8 +27,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-//@Configuration
-public class MultiFormatJob {
+@Configuration
+public class MultiLineJob {
 
     @Autowired
     private JobRepository jobRepository;
@@ -36,7 +37,7 @@ public class MultiFormatJob {
 
     @Bean
     public Job job() {
-        return new JobBuilder("MultiFormatJob", jobRepository)
+        return new JobBuilder("MultiLineJob", jobRepository)
                 .start(copyFileStep())
                 .listener(JobListenerFactoryBean.getListener(new JobLoggerListener()))
                 .build();
@@ -46,11 +47,16 @@ public class MultiFormatJob {
     public Step copyFileStep() {
         return new StepBuilder("copyFileStep", jobRepository)
                 .<Customer, Customer>chunk(10, transactionManager)
-                .reader(customerItemReader(null))
+                .reader(customerFileReader())
                 .writer(itemWriter())
                 .build();
     }
 
+
+    @Bean
+    public CustomerFileReader customerFileReader() {
+        return new CustomerFileReader((ItemStreamReader) customerItemReader(null));
+    }
 
     @Bean
     @StepScope
@@ -63,6 +69,7 @@ public class MultiFormatJob {
                 .lineMapper(lineTokenizer())
                 .build();
     }
+
 
     @Bean
     public PatternMatchingCompositeLineMapper lineTokenizer() {

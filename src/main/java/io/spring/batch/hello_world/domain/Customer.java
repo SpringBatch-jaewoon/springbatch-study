@@ -1,5 +1,6 @@
 package io.spring.batch.hello_world.domain;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +18,8 @@ public class Customer {
     private String state;
     private String zipCode;
 
+	private List<Transaction> transactions;
+
     public Customer(){
     }
     public Customer(String firstName, String middleInitial, String lastName, String addressNumber, String street, String city, String state, String zipCode) {
@@ -30,20 +33,24 @@ public class Customer {
 		this.zipCode = zipCode;
 	}
 
-    @Override
+	@Override
 	public String toString() {
-		return "Customer{" +
-				"firstName='" + firstName + '\'' +
-				", middleInitial='" + middleInitial + '\'' +
-				", lastName='" + lastName + '\'' +
-				", address='" + address + '\'' +
-				", addressNumber='" + addressNumber + '\'' +
-				", street='" + street + '\'' +
-				", city='" + city + '\'' +
-				", state='" + state + '\'' +
-				", zipCode='" + zipCode + '\'' +
-				'}';
+		StringBuilder output = new StringBuilder();
+
+		output.append(firstName);
+		output.append(" ");
+		output.append(middleInitial);
+		output.append(". ");
+		output.append(lastName);
+
+		if(transactions != null&& transactions.size() > 0) {
+			output.append(" has ");
+			output.append(transactions.size());
+			output.append(" transactions.");
+		} else {
+			output.append(" has no transactions.");
+		}
+
+		return output.toString();
 	}
-
-
 }
