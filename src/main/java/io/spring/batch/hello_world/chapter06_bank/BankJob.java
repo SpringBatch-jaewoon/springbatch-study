@@ -37,7 +37,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.WritableResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-@Configuration
+//@Configuration
 public class BankJob {
 
     @Autowired
