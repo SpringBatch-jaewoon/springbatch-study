@@ -12,6 +12,7 @@ public class Customer {
     private String lastName;
     private String addressNumber;
 	private String street;
+	private String address;
     private String city;
     private String state;
     private String zipCode;
@@ -35,6 +36,7 @@ public class Customer {
 				"firstName='" + firstName + '\'' +
 				", middleInitial='" + middleInitial + '\'' +
 				", lastName='" + lastName + '\'' +
+				", address='" + address + '\'' +
 				", addressNumber='" + addressNumber + '\'' +
 				", street='" + street + '\'' +
 				", city='" + city + '\'' +

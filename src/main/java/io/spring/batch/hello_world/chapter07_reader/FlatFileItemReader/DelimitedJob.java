@@ -64,7 +64,7 @@ public class DelimitedJob {
 						"city",
 						"state",
 						"zipCode"})
-				.targetType(Customer.class)
+                .fieldSetMapper(new CustomerFieldSetMapper())
                 .build();
     }
 
