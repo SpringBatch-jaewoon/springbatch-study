@@ -55,16 +55,8 @@ public class DelimitedJob {
         return new FlatFileItemReaderBuilder<Customer>()
                 .name("customerItemReader")
                 .resource(inputFile)
-                .delimited()
-				.names(new String[] {"firstName",
-						"middleInitial",
-						"lastName",
-						"addressNumber",
-						"street",
-						"city",
-						"state",
-						"zipCode"})
-                .fieldSetMapper(new CustomerFieldSetMapper())
+                .lineTokenizer(new CustomerFileLineTokenizer())
+                .targetType(Customer.class)
                 .build();
     }
 
