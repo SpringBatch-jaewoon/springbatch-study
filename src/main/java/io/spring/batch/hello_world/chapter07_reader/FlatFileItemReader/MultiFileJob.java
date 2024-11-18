@@ -2,6 +2,9 @@ package io.spring.batch.hello_world.chapter07_reader.FlatFileItemReader;
 
 import io.spring.batch.hello_world.chapter04.job.JobLoggerListener;
 import io.spring.batch.hello_world.domain.Customer;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.batch.core.Job;
@@ -11,10 +14,12 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.listener.JobListenerFactoryBean;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.MultiResourceItemReader;
+import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.builder.MultiResourceItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;
@@ -25,10 +30,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.ResourceUtils;
 
-//@Configuration
-public class MultiLineJob {
+@Configuration
+public class MultiFileJob {
 
     @Autowired
     private JobRepository jobRepository;
@@ -37,7 +45,7 @@ public class MultiLineJob {
 
     @Bean
     public Job job() {
-        return new JobBuilder("MultiLineJob", jobRepository)
+        return new JobBuilder("MultiFileJob", jobRepository)
                 .start(copyFileStep())
                 .listener(JobListenerFactoryBean.getListener(new JobLoggerListener()))
                 .build();
@@ -47,28 +55,45 @@ public class MultiLineJob {
     public Step copyFileStep() {
         return new StepBuilder("copyFileStep", jobRepository)
                 .<Customer, Customer>chunk(10, transactionManager)
-                .reader(customerFileReader())
+                .reader(multiCustomerReader(null))
                 .writer(itemWriter())
                 .build();
     }
 
+    @Bean
+    @StepScope
+    public MultiResourceItemReader multiCustomerReader(
+            @Value("#{jobParameters['customerFile']}") String url) {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources = null;
+        try {
+            resources = resolver.getResources(ResourceUtils.CLASSPATH_URL_PREFIX+ url);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new MultiResourceItemReaderBuilder<>()
+                .name("multiCustomerReader")
+                .resources(resources)
+                .delegate(customerMultiFileReader())
+                .build();
+    }
 
     @Bean
-    public CustomerFileReader customerFileReader() {
-        return new CustomerFileReader((ItemStreamReader) customerItemReader(null));
+    public CustomerMultiFileReader customerMultiFileReader() {
+        return new CustomerMultiFileReader((ResourceAwareItemReaderItemStream) customerItemReader());
     }
 
     @Bean
     @StepScope
-    public FlatFileItemReader<Customer> customerItemReader(
-            @Value("#{jobParameters['customerFile']}") ClassPathResource inputFile) {
-
+    public FlatFileItemReader<Customer> customerItemReader() {
         return new FlatFileItemReaderBuilder<Customer>()
                 .name("customerItemReader")
-                .resource(inputFile)
                 .lineMapper(lineTokenizer())
                 .build();
     }
+
+
 
     @Bean
     public PatternMatchingCompositeLineMapper lineTokenizer() {
