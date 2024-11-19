@@ -22,6 +22,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.util.StringUtils;
@@ -63,7 +65,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
         builder.driverClassName("com.mysql.cj.jdbc.Driver");
         builder.username("root");
         builder.password("1234");
-        builder.url("jdbc:mysql://localhost:3306/batch?serverTimezone=Asia/Seoul&useSSL=false");
+        builder.url("jdbc:mysql://localhost:3306/server?serverTimezone=Asia/Seoul&useSSL=false");
         return builder.build();
     }
 
@@ -77,7 +79,9 @@ public class BatchConfig extends DefaultBatchConfiguration {
     @Bean("transactionManager")
     protected PlatformTransactionManager getTransactionManager() {
         return new DataSourceTransactionManager(dataSource());
+//        return new JpaTransactionManager();
     }
+
 
 //    @Override
 //    public JobExplorer jobExplorer() throws BatchConfigurationException {

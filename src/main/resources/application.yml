@@ -15,5 +15,11 @@ spring:
     jdbc:
       initialize-schema: always
     job:
-      name: JdbcPagingJob
+      name: JPAJob
       enabled: true
+
+  jpa:
+    hibernate:
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
