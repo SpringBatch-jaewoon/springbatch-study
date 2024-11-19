@@ -1,10 +1,9 @@
-package io.spring.batch.hello_world.chapter07_reader.XMLFileItemReader;
+package io.spring.batch.hello_world.chapter07_reader.JSONItemReader;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.batch.hello_world.chapter04.job.JobLoggerListener;
 import io.spring.batch.hello_world.domain.Customer;
-import io.spring.batch.hello_world.domain.Transaction;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -13,20 +12,18 @@ import org.springframework.batch.core.listener.JobListenerFactoryBean;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.xml.StaxEventItemReader;
-import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
+import org.springframework.batch.item.json.JacksonJsonObjectReader;
+import org.springframework.batch.item.json.JsonItemReader;
+import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.oxm.Unmarshaller;
-import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 
-//@Configuration
-public class XMLJob {
-
+@Configuration
+public class JsonJob {
     @Autowired
     private JobRepository jobRepository;
     @Autowired
@@ -34,7 +31,7 @@ public class XMLJob {
 
     @Bean
     public Job job() {
-        return new JobBuilder("XMLJob", jobRepository)
+        return new JobBuilder("JsonJob", jobRepository)
                 .start(copyFileStep())
                 .listener(JobListenerFactoryBean.getListener(new JobLoggerListener()))
                 .build();
@@ -49,27 +46,28 @@ public class XMLJob {
                 .build();
     }
 
-	@Bean
+    @Bean
 	@StepScope
-	public StaxEventItemReader<Customer> customerFileReader(
-			@Value("#{jobParameters['customerFile']}") ClassPathResource inputFile) {
+	public JsonItemReader<Customer> customerFileReader(
+            @Value("#{jobParameters['customerFile']}") ClassPathResource inputFile) {
 
-		return new StaxEventItemReaderBuilder<Customer>()
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"));
+
+		JacksonJsonObjectReader<Customer> jsonObjectReader = new JacksonJsonObjectReader<>(Customer.class);
+		jsonObjectReader.setMapper(objectMapper);
+
+		return new JsonItemReaderBuilder<Customer>()
 				.name("customerFileReader")
+				.jsonObjectReader(jsonObjectReader)
 				.resource(inputFile)
-				.addFragmentRootElements("customer")
-				.unmarshaller(customerMarshaller())
 				.build();
-	}
-
-	@Bean
-	public XStreamMarshaller customerMarshaller() {
-        return new XStreamMarshaller();
 	}
 
 	@Bean
 	public ItemWriter itemWriter() {
 		return (items) -> items.forEach(System.out::println);
 	}
+
 
 }

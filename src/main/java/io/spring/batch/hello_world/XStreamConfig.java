@@ -9,7 +9,7 @@ import io.spring.batch.hello_world.domain.Transaction;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 
-@Configuration
+//@Configuration
 public class XStreamConfig {
     public XStreamConfig(XStreamMarshaller marshaller) {
         XStream xstream = marshaller.getXStream();
