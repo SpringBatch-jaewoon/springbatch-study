@@ -1,9 +1,9 @@
 package io.spring.batch.hello_world.chapter07_reader.JdbcItemReader;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.spring.batch.hello_world.chapter04.job.JobLoggerListener;
 import io.spring.batch.hello_world.domain.Customer;
-import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 import javax.sql.DataSource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -14,21 +14,21 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
+import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
-import org.springframework.batch.item.json.JacksonJsonObjectReader;
-import org.springframework.batch.item.json.JsonItemReader;
-import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
+import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
+import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.transaction.PlatformTransactionManager;
 
-//@Configuration
-public class JdbcCursorJob {
+@Configuration
+public class JdbcPagingJob {
 
     @Autowired
     private JobRepository jobRepository;
@@ -37,7 +37,7 @@ public class JdbcCursorJob {
 
     @Bean
     public Job job() {
-        return new JobBuilder("JdbcCursorJob", jobRepository)
+        return new JobBuilder("JdbcPagingJob", jobRepository)
                 .start(copyFileStep())
                 .listener(JobListenerFactoryBean.getListener(new JobLoggerListener()))
                 .build();
@@ -47,27 +47,40 @@ public class JdbcCursorJob {
     public Step copyFileStep() {
         return new StepBuilder("copyFileStep", jobRepository)
                 .<Customer, Customer>chunk(10, transactionManager)
-                .reader(customerItemReader(null))
+                .reader(customerItemReader(null, null, null))
                 .writer(itemWriter())
                 .build();
     }
 
-    @Bean
-	public JdbcCursorItemReader<Customer> customerItemReader(@Qualifier("serverDatasource") DataSource dataSource) {
-		return new JdbcCursorItemReaderBuilder<Customer>()
+
+	@Bean
+	@StepScope
+	public JdbcPagingItemReader<Customer> customerItemReader(@Qualifier("serverDatasource") DataSource dataSource,
+                                                             PagingQueryProvider pagingQueryProvider,
+                                                             @Value("#{jobParameters['city']}") String city) {
+
+		Map<String, Object> parameterValues = new HashMap<>(1);
+		parameterValues.put("city", city);
+
+		return new JdbcPagingItemReaderBuilder<Customer>()
 				.name("customerItemReader")
 				.dataSource(dataSource)
-                .rowMapper(new CustomerRowMapper())
-				.sql("select * from customer where city = ?")
-				.preparedStatementSetter(citySetter(null))
+				.queryProvider(pagingQueryProvider)
+				.parameterValues(parameterValues)
+				.pageSize(10)
+				.rowMapper(new CustomerRowMapper())
 				.build();
 	}
 
     @Bean
-	@StepScope
-	public ArgumentPreparedStatementSetter citySetter(
-			@Value("#{jobParameters['city']}") String city) {
-		return new ArgumentPreparedStatementSetter(new Object [] {city});
+	public SqlPagingQueryProviderFactoryBean pagingQueryProvider(@Qualifier("serverDatasource") DataSource dataSource) {
+		SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
+		factoryBean.setDataSource(dataSource);
+		factoryBean.setSelectClause("select *");
+		factoryBean.setFromClause("from Customer");
+		factoryBean.setWhereClause("where city = :city");
+		factoryBean.setSortKey("lastName");
+		return factoryBean;
 	}
 
     @Bean
