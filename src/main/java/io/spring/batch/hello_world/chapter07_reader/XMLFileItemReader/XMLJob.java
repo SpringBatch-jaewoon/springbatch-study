@@ -64,24 +64,7 @@ public class XMLJob {
 
 	@Bean
 	public XStreamMarshaller customerMarshaller() {
-        Map<String, Class<?>> aliases = new HashMap<>();
-
-        // 첫번째 키는 조각의 루트 엘리먼트, 값은 바인딩할 객체 타입
-        aliases.put("customer", Customer.class);
-
-        // 두번째 부터는 하위 엘리먼트와 각 클래스 타입
-        aliases.put("firstName", String.class);
-        aliases.put("middleInital", String.class);
-        aliases.put("lastName", String.class);
-        aliases.put("address", String.class);
-        aliases.put("city", String.class);
-        aliases.put("state", String.class);
-        aliases.put("zip", String.class);
-        aliases.put("transaction", Transaction.class);
-
-        XStreamMarshaller xStreamMarshaller = new XStreamMarshaller();
-        xStreamMarshaller.setAliases(aliases);
-        return xStreamMarshaller;
+        return new XStreamMarshaller();
 	}
 
 	@Bean
