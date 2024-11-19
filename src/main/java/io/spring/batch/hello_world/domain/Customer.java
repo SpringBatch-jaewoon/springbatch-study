@@ -30,7 +30,7 @@ public class Customer {
 	@XStreamAlias("zipCode")
     private String zipCode;
 
-	@XStreamImplicit
+	@XStreamAlias("transactions")
 	private List<Transaction> transactions;
 
     public Customer(){

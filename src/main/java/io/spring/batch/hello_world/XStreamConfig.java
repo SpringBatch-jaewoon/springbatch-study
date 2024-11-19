@@ -17,6 +17,6 @@ public class XStreamConfig {
         xstream.registerConverter(new DateConverter("yyyy-MM-dd HH:mm:ss",
                 new String[] {"yyyy-MM-dd hh:mm:ss"}), PRIORITY_NORMAL);
         xstream.processAnnotations(new Class[] {Customer.class, Transaction.class});
-        xstream.addImplicitCollection(Customer.class, "transactions");
+//        xstream.addImplicitCollection(Customer.class, "transactions");
     }
 }
