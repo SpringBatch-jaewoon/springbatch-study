@@ -25,14 +25,14 @@ public class CustomerFileReader implements ItemStreamReader<Customer> {
         Customer item = (Customer) curItem;
         curItem = null;
 
-		if(item != null) {
-			item.setTransactions(new ArrayList<>());
-
-			while(peek() instanceof Transaction) {
-				item.getTransactions().add((Transaction) curItem);
-				curItem = null;
-			}
-		}
+//		if(item != null) {
+//			item.setTransactions(new ArrayList<>());
+//
+//			while(peek() instanceof Transaction) {
+//				item.getTransactions().add((Transaction) curItem);
+//				curItem = null;
+//			}
+//		}
 
         return item;
     }
