@@ -1,11 +1,11 @@
 package io.spring.batch.hello_world.domain;
 
 import java.util.List;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 public class Customer {
 
     private String firstName;

@@ -35,7 +35,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ResourceUtils;
 
-@Configuration
+//@Configuration
 public class MultiFileJob {
 
     @Autowired

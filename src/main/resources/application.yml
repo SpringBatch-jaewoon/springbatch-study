@@ -15,5 +15,5 @@ spring:
     jdbc:
       initialize-schema: always
     job:
-      name: MultiFileJob
+      name: XMLJob
       enabled: true
