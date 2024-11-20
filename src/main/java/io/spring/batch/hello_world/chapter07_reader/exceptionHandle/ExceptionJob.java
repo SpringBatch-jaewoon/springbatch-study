@@ -43,7 +43,10 @@ public class ExceptionJob {
 //                .skip(Exception.class)
 //                .noSkip(ParseException.class)
 //                .skipLimit(10)
-                .skipPolicy(new JobSkipPolicy())
+//                .skipPolicy(new JobSkipPolicy())
+                .skip(Exception.class)
+                .skipLimit(100)
+                .listener(customerItemListener())
                 .build();
     }
     @Bean
@@ -51,6 +54,10 @@ public class ExceptionJob {
         CustomerItemReader customerItemReader= new CustomerItemReader();
         customerItemReader.setName("customerItemReader");
         return customerItemReader;
+    }
+    @Bean
+    public CustomerItemListener customerItemListener(){
+        return new CustomerItemListener();
     }
     @Bean
     public ItemWriter<Customer> itemWriter() {
