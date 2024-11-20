@@ -46,7 +46,8 @@ public class ExceptionJob {
 //                .skipPolicy(new JobSkipPolicy())
                 .skip(Exception.class)
                 .skipLimit(100)
-                .listener(customerItemListener())
+//                .listener(customerItemListener())
+                .listener(emptyInputStepFailer())
                 .build();
     }
     @Bean
@@ -58,6 +59,10 @@ public class ExceptionJob {
     @Bean
     public CustomerItemListener customerItemListener(){
         return new CustomerItemListener();
+    }
+    @Bean
+    public EmptyInputStepFailer emptyInputStepFailer(){
+        return new EmptyInputStepFailer();
     }
     @Bean
     public ItemWriter<Customer> itemWriter() {
