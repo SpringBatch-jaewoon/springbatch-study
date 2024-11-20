@@ -10,6 +10,7 @@ import org.springframework.batch.core.listener.JobListenerFactoryBean;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.adapter.ItemProcessorAdapter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.validator.BeanValidatingItemProcessor;
@@ -21,8 +22,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-//@Configuration
-public class ValidationJob {
+@Configuration
+public class ItemProcessorAdapterJob {
 
     @Autowired
     private JobRepository jobRepository;
@@ -43,17 +44,15 @@ public class ValidationJob {
         return new StepBuilder("copyFileStep", jobRepository)
                 .<Customer, Customer>chunk(10, transactionManager)
                 .reader(customerItemReader(null))
-//                .processor(customerBeanValidatingItemProcessor())
-                .processor(customerValidatingItemProcessor())
+                .processor(itemProcessor(null))
                 .writer(itemWriter())
-                .stream(validator())
                 .build();
     }
 
     @Bean
     @StepScope
     public FlatFileItemReader<Customer> customerItemReader(
-			@Value("#{jobParameters['customerFile']}") ClassPathResource inputFile) {
+            @Value("#{jobParameters['customerFile']}") ClassPathResource inputFile) {
         //customer.csv
 
         return new FlatFileItemReaderBuilder<Customer>()
@@ -71,22 +70,12 @@ public class ValidationJob {
                 .build();
     }
 
-
-    @Bean
-    public BeanValidatingItemProcessor<Customer> customerBeanValidatingItemProcessor(){
-        return new BeanValidatingItemProcessor<>();
-    }
-
-    @Bean
-	public UniqueLastNameValidator validator() {
-		UniqueLastNameValidator uniqueLastNameValidator = new UniqueLastNameValidator();
-		uniqueLastNameValidator.setName("validator");
-		return uniqueLastNameValidator;
-	}
-
 	@Bean
-	public ValidatingItemProcessor<Customer> customerValidatingItemProcessor() {
-		return new ValidatingItemProcessor<>(validator());
+	public ItemProcessorAdapter<Customer, Customer> itemProcessor(UpperCaseNameService service) {
+		ItemProcessorAdapter<Customer, Customer> adapter = new ItemProcessorAdapter<>();
+		adapter.setTargetObject(service);
+		adapter.setTargetMethod("upperCase");
+		return adapter;
 	}
 
     @Bean
