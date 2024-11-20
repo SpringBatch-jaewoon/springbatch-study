@@ -14,18 +14,19 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.adapter.ItemProcessorAdapter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.support.ClassifierCompositeItemProcessor;
 import org.springframework.batch.item.support.CompositeItemProcessor;
-import org.springframework.batch.item.validator.BeanValidatingItemProcessor;
 import org.springframework.batch.item.validator.ValidatingItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.classify.Classifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-//@Configuration
-public class CompositeItemProcessorJob {
+@Configuration
+public class ClassifierCompositeItemProcessorJob {
     @Autowired
     private JobRepository jobRepository;
     @Autowired
@@ -45,10 +46,8 @@ public class CompositeItemProcessorJob {
         return new StepBuilder("copyFileStep", jobRepository)
                 .<Customer, Customer>chunk(10, transactionManager)
                 .reader(customerItemReader(null))
-//                .processor(customerBeanValidatingItemProcessor())
-                .processor(customerValidatingItemProcessor())
+                .processor(itemProcessor())
                 .writer(itemWriter())
-                .stream(validator())
                 .build();
     }
 
@@ -72,34 +71,31 @@ public class CompositeItemProcessorJob {
                 .resource(inputFile)
                 .build();
     }
-    @Bean
-	public CompositeItemProcessor<Customer, Customer> itemProcessor() {
-		CompositeItemProcessor<Customer, Customer> itemProcessor = new CompositeItemProcessor<>();
 
-		itemProcessor.setDelegates(Arrays.asList(
-				customerValidatingItemProcessor(),
-				upperCaseItemProcessor(null)));
+
+	@Bean
+	public ClassifierCompositeItemProcessor<Customer, Customer> itemProcessor() {
+		ClassifierCompositeItemProcessor<Customer, Customer> itemProcessor = new ClassifierCompositeItemProcessor<>();
+
+        Classifier classifier =
+                new ZipCodeClassifier(upperCaseItemProcessor(null), lowerCaseItemProcessor(null));
+        itemProcessor.setClassifier(classifier);
 		return itemProcessor;
 	}
-    @Bean
-    public UniqueLastNameValidator validator() {
-        UniqueLastNameValidator uniqueLastNameValidator = new UniqueLastNameValidator();
-        uniqueLastNameValidator.setName("validator");
-        return uniqueLastNameValidator;
-    }
-
-    @Bean
-    public ValidatingItemProcessor<Customer> customerValidatingItemProcessor() {
-        ValidatingItemProcessor<Customer> itemProcessor = new ValidatingItemProcessor<>(validator());
-        itemProcessor.setFilter(true);
-        return itemProcessor;
-    }
 
     @Bean
     public ItemProcessorAdapter<Customer, Customer> upperCaseItemProcessor(UpperCaseNameService service) {
         ItemProcessorAdapter<Customer, Customer> adapter = new ItemProcessorAdapter<>();
         adapter.setTargetObject(service);
         adapter.setTargetMethod("upperCase");
+        return adapter;
+    }
+
+    @Bean
+    public ItemProcessorAdapter<Customer, Customer> lowerCaseItemProcessor(LowerCaseNameService service) {
+        ItemProcessorAdapter<Customer, Customer> adapter = new ItemProcessorAdapter<>();
+        adapter.setTargetObject(service);
+        adapter.setTargetMethod("lowerCase");
         return adapter;
     }
 
