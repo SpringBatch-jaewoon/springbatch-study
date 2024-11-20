@@ -15,7 +15,7 @@ spring:
     jdbc:
       initialize-schema: always
     job:
-      name: ExceptionJob
+      name: job
       enabled: true
 
   jpa:

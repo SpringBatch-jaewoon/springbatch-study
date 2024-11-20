@@ -21,48 +21,48 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 
 //@Configuration
-public class SpringDataRepositoryJob {
-
-    @Autowired
-    private JobRepository jobRepository;
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-
-    @Bean
-    public Job job() {
-        return new JobBuilder("SpringDataRepositoryJob", jobRepository)
-                .start(copyFileStep())
-                .listener(JobListenerFactoryBean.getListener(new JobLoggerListener()))
-                .build();
-    }
-
-    @Bean
-    public Step copyFileStep() {
-        return new StepBuilder("copyFileStep", jobRepository)
-                .<Customer, Customer>chunk(10, transactionManager)
-                .reader(customerItemReader(null, null))
-                .writer(itemWriter())
-                .build();
-    }
-
-	@Bean
-	@StepScope
-	public RepositoryItemReader<Customer> customerItemReader(
-            CustomerRepository repository,
-            @Value("#{jobParameters['city']}") String city) {
-
-		return new RepositoryItemReaderBuilder<Customer>()
-				.name("customerItemReader")
-				.arguments(Collections.singletonList(city))
-				.methodName("findByCity")
-				.repository(repository)
-				.sorts(Collections.singletonMap("lastName", Sort.Direction.ASC))
-				.build();
-	}
-
-
-    @Bean
-    public ItemWriter itemWriter() {
-        return (items) -> items.forEach(System.out::println);
-    }
-}
+//public class SpringDataRepositoryJob {
+//
+//    @Autowired
+//    private JobRepository jobRepository;
+//    @Autowired
+//    private PlatformTransactionManager transactionManager;
+//
+//    @Bean
+//    public Job job() {
+//        return new JobBuilder("SpringDataRepositoryJob", jobRepository)
+//                .start(copyFileStep())
+//                .listener(JobListenerFactoryBean.getListener(new JobLoggerListener()))
+//                .build();
+//    }
+//
+//    @Bean
+//    public Step copyFileStep() {
+//        return new StepBuilder("copyFileStep", jobRepository)
+//                .<Customer, Customer>chunk(10, transactionManager)
+//                .reader(customerItemReader(null, null))
+//                .writer(itemWriter())
+//                .build();
+//    }
+//
+//	@Bean
+//	@StepScope
+//	public RepositoryItemReader<Customer> customerItemReader(
+//            CustomerRepository repository,
+//            @Value("#{jobParameters['city']}") String city) {
+//
+//		return new RepositoryItemReaderBuilder<Customer>()
+//				.name("customerItemReader")
+//				.arguments(Collections.singletonList(city))
+//				.methodName("findByCity")
+//				.repository(repository)
+//				.sorts(Collections.singletonMap("lastName", Sort.Direction.ASC))
+//				.build();
+//	}
+//
+//
+//    @Bean
+//    public ItemWriter itemWriter() {
+//        return (items) -> items.forEach(System.out::println);
+//    }
+//}

@@ -44,7 +44,7 @@ public class CustomerItemReader extends ItemStreamSupport implements ItemReader<
     private Customer buildCustomer() {
         Customer customer = new Customer();
 
-        customer.setId((long) generator.nextInt(Integer.MAX_VALUE));
+//        customer.setId((long) generator.nextInt(Integer.MAX_VALUE));
         customer.setFirstName(
                 firstNames[generator.nextInt(firstNames.length - 1)]);
         customer.setMiddleInitial(
@@ -56,7 +56,7 @@ public class CustomerItemReader extends ItemStreamSupport implements ItemReader<
                 streets[generator.nextInt(streets.length - 1)]);
         customer.setCity(cities[generator.nextInt(cities.length - 1)]);
         customer.setState(states[generator.nextInt(states.length - 1)]);
-        customer.setZipCode(String.valueOf(generator.nextInt(99999)));
+//        customer.setZipCode(String.valueOf(generator.nextInt(99999)));
 
         return customer;
     }

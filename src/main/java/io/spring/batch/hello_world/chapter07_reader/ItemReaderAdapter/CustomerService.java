@@ -25,7 +25,7 @@ public class CustomerService {
 
     private Customer buildCustomer(){
         Customer customer = new Customer();
-        customer.setId((long) generator.nextInt(Integer.MAX_VALUE));
+//        customer.setId((long) generator.nextInt(Integer.MAX_VALUE));
         return customer;
     }
 

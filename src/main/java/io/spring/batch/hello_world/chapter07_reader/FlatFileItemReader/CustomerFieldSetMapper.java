@@ -18,7 +18,7 @@ public class CustomerFieldSetMapper implements FieldSetMapper {
         customer.setLastName(fieldSet.readString("lastName"));
         customer.setMiddleInitial(fieldSet.readString("middleInitial"));
         customer.setState(fieldSet.readString("state"));
-        customer.setZipCode(fieldSet.readString("zipCode"));
+//        customer.setZipCode(fieldSet.readString("zipCode"));
 
         return customer;
     }
