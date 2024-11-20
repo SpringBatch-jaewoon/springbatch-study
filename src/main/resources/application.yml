@@ -15,7 +15,7 @@ spring:
     jdbc:
       initialize-schema: always
     job:
-      name: JPAJob
+      name: StoredProcedureJob
       enabled: true
 
   jpa:
