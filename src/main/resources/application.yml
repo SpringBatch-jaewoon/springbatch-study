@@ -15,7 +15,7 @@ spring:
     jdbc:
       initialize-schema: always
     job:
-      name: ItemStreamReaderJob
+      name: ExceptionJob
       enabled: true
 
   jpa:
