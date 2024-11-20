@@ -53,10 +53,14 @@ public class JPAJob {
 			EntityManagerFactory entityManagerFactory,
 			@Value("#{jobParameters['city']}") String city) {
 
+        CustomerByCityQueryProvider queryProvider = new CustomerByCityQueryProvider();
+        queryProvider.setCityName(city);
+
 		return new JpaPagingItemReaderBuilder<Customer>()
 				.name("customerItemReader")
 				.entityManagerFactory(entityManagerFactory)
-				.queryString("select c from Customer c where c.city = :city")
+//				.queryString("select c from Customer c where c.city = :city")
+                .queryProvider(queryProvider)
 				.parameterValues(Collections.singletonMap("city", city))
 				.build();
 	}
