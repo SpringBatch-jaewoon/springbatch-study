@@ -1,6 +1,7 @@
-package io.spring.batch.hello_world.chapter08_processor;
+package io.spring.batch.hello_world.chapter09_writer;
 
 import io.spring.batch.hello_world.chapter04.job.JobLoggerListener;
+import io.spring.batch.hello_world.chapter08_processor.EvenFilteringItemProcessor;
 import io.spring.batch.hello_world.domain.Customer;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -11,16 +12,21 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.WritableResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-//@Configuration
-public class CustomItemProcessorJob {
+
+@Configuration
+public class FlatFileItemWriterJob {
     @Autowired
     private JobRepository jobRepository;
     @Autowired
@@ -40,8 +46,7 @@ public class CustomItemProcessorJob {
         return new StepBuilder("copyFileStep", jobRepository)
                 .<Customer, Customer>chunk(10, transactionManager)
                 .reader(customerItemReader(null))
-                .processor(itemProcessor())
-                .writer(itemWriter())
+                .writer(customerItemWriter(null))
                 .build();
     }
 
@@ -66,13 +71,19 @@ public class CustomItemProcessorJob {
                 .build();
     }
 
-    @Bean
-    public EvenFilteringItemProcessor itemProcessor() {
-        return new EvenFilteringItemProcessor();
-    }
 
-    @Bean
-    public ItemWriter<Customer> itemWriter() {
-        return (items) -> items.forEach(System.out::println);
-    }
+	@Bean
+	@StepScope
+	public FlatFileItemWriter<Customer> customerItemWriter(
+			@Value("#{jobParameters['outputFile']}") FileSystemResource outputFile) {
+
+		return new FlatFileItemWriterBuilder<Customer>()
+				.name("customerItemWriter")
+                .resource(outputFile)
+                .formatted()
+                .format("%s %s lives at %s %s in %s, %s.")
+				.names(new String[] {"firstName",
+                        "lastName", "address", "city", "state", "zip"})
+				.build();
+	}
 }

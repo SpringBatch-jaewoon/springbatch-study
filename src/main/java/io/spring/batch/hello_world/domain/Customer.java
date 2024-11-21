@@ -17,6 +17,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Customer {
 
+	private static final long serialVersionUID = 1L;
+	private long id;
+
 	@NotNull(message="First name is required")
 	@Pattern(regexp="[a-zA-Z]+", message="First name must be alphabetical")
 	private String firstName;
