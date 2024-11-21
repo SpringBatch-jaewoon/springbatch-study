@@ -8,6 +8,3 @@ Harry;Smith;3273 Isabella Ave;Houston;FL;97261
 Steve;James;8407 Infinite Loop Drive;Las Vegas;WA;90520
 Erica;Neuberger;513 S. Greenwood Ave;Miami;IL;12778
 Aimee;Hoover;7341 Vel Avenue;Mobile;AL;35928
-Jonas;Gilbert;8852 In St.;Saint Paul;MN;57321
-Stuart;Mckenzie;5529 Orci Av.;Nampa;ID;18562
-Sydnee;Robinson;894 Ornare. Ave;Olathe;KS;25606
