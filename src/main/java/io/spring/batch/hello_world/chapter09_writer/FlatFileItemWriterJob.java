@@ -99,7 +99,8 @@ public class FlatFileItemWriterJob {
                 .delimiter(";")
                 .names(new String[] {"firstName",
                         "lastName", "address", "city", "state", "zip"})
-                .shouldDeleteIfEmpty(true)
+//                .shouldDeleteIfEmpty(true)
+                .shouldDeleteIfExists(true)
                 .build();
     }
 }
