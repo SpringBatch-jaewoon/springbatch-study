@@ -46,7 +46,7 @@ public class FlatFileItemWriterJob {
         return new StepBuilder("copyFileStep", jobRepository)
                 .<Customer, Customer>chunk(10, transactionManager)
                 .reader(customerItemReader(null))
-                .writer(customerItemWriter(null))
+                .writer(customerItemWriter2(null))
                 .build();
     }
 
@@ -86,4 +86,19 @@ public class FlatFileItemWriterJob {
                         "lastName", "address", "city", "state", "zip"})
 				.build();
 	}
+
+    @Bean
+    @StepScope
+    public FlatFileItemWriter<Customer> customerItemWriter2(
+            @Value("#{jobParameters['outputFile']}") FileSystemResource outputFile) {
+
+        return new FlatFileItemWriterBuilder<Customer>()
+                .name("customerItemWriter")
+                .resource(outputFile)
+                .delimited()
+                .delimiter(";")
+                .names(new String[] {"firstName",
+                        "lastName", "address", "city", "state", "zip"})
+                .build();
+    }
 }
