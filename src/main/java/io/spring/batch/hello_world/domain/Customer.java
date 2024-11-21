@@ -1,6 +1,8 @@
 package io.spring.batch.hello_world.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -11,13 +13,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-//@Entity
-//@Table(name = "customer")
+@Entity
+@Table(name = "customer")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Customer {
 
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@NotNull(message="First name is required")

@@ -78,8 +78,8 @@ public class BatchConfig extends DefaultBatchConfiguration {
     @Primary
     @Bean("transactionManager")
     protected PlatformTransactionManager getTransactionManager() {
-        return new DataSourceTransactionManager(dataSource());
-//        return new JpaTransactionManager();
+//        return new DataSourceTransactionManager(dataSource());
+        return new JpaTransactionManager();
     }
 
 
