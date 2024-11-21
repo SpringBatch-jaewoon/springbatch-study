@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-@Primary
-@Component
+//@Primary
+//@Component
 public class CustomerService {
     private List<Customer> customers;
     private int curIndex;
