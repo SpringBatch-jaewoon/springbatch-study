@@ -30,7 +30,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 
-@Configuration
+//@Configuration
 public class JMSjob {
     @Autowired
     private JobRepository jobRepository;

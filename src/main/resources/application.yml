@@ -33,3 +33,14 @@ spring:
     packages:
       trust-all: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: woonie155
+    password: 1 #앱번호
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

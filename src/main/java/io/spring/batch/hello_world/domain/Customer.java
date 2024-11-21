@@ -56,6 +56,8 @@ public class Customer implements Serializable {
 	@Pattern(regexp="\\d{5}")
 	private String zip;
 
+	private String email;
+
 	public Customer(Customer original) {
 		this.firstName = original.getFirstName();
 		this.middleInitial = original.getMiddleInitial();
