@@ -23,3 +23,13 @@ spring:
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  jms:
+    template:
+      default-destination: customers
+      receive-timeout: 5000
+  activemq:
+    broker-url: vm://localhost?broker.persistent=false
+    packages:
+      trust-all: true
+

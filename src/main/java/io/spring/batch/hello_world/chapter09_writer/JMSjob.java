@@ -2,7 +2,8 @@ package io.spring.batch.hello_world.chapter09_writer;
 
 import io.spring.batch.hello_world.chapter04.job.JobLoggerListener;
 import io.spring.batch.hello_world.domain.Customer;
-import jakarta.persistence.EntityManagerFactory;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -10,20 +11,27 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.listener.JobListenerFactoryBean;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.adapter.ItemWriterAdapter;
-import org.springframework.batch.item.adapter.PropertyExtractingDelegatingItemWriter;
-import org.springframework.batch.item.database.JpaItemWriter;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.jms.JmsItemReader;
+import org.springframework.batch.item.jms.JmsItemWriter;
+import org.springframework.batch.item.jms.builder.JmsItemReaderBuilder;
+import org.springframework.batch.item.jms.builder.JmsItemWriterBuilder;
+import org.springframework.batch.item.xml.StaxEventItemWriter;
+import org.springframework.batch.item.xml.builder.StaxEventItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 
-//@Configuration
-public class AdapterJob {
+@Configuration
+public class JMSjob {
     @Autowired
     private JobRepository jobRepository;
     @Autowired
@@ -32,18 +40,28 @@ public class AdapterJob {
     @Bean
     public Job job() throws Exception {
         return new JobBuilder("job", jobRepository)
-                .start(copyFileStep())
+                .start(formatInputStep())
+                .next(formatOutputStep())
                 .listener(JobListenerFactoryBean.getListener(
                         new JobLoggerListener()))
                 .build();
     }
 
     @Bean
-    public Step copyFileStep() throws Exception {
-        return new StepBuilder("copyFileStep", jobRepository)
+    public Step formatInputStep() throws Exception {
+        return new StepBuilder("formatInputStep", jobRepository)
                 .<Customer, Customer>chunk(10, transactionManager)
                 .reader(customerItemReader(null))
-                .writer(itemWriter2(null))
+                .writer(jmsItemWriter(null))
+                .build();
+    }
+
+    @Bean
+    public Step formatOutputStep() throws Exception {
+        return new StepBuilder("formatOutputStep", jobRepository)
+                .<Customer, Customer>chunk(10, transactionManager)
+                .reader(jmsItemReader(null))
+                .writer(basicItemWriter())
                 .build();
     }
 
@@ -69,20 +87,27 @@ public class AdapterJob {
     }
 
     @Bean
-    public ItemWriterAdapter<Customer> itemWriter1(CustomerService customerService){
-        ItemWriterAdapter<Customer> customerItemWriterAdapter = new ItemWriterAdapter<>();
-        customerItemWriterAdapter.setTargetObject(customerService);
-        customerItemWriterAdapter.setTargetMethod("logCustomer");
-        return customerItemWriterAdapter;
+    public JmsItemWriter<Customer> jmsItemWriter(JmsTemplate jmsTemplate) {
+        return new JmsItemWriterBuilder<Customer>()
+                .jmsTemplate(jmsTemplate)
+                .build();
     }
 
-    @Bean
-	public PropertyExtractingDelegatingItemWriter<Customer> itemWriter2(CustomerService customerService) {
-		PropertyExtractingDelegatingItemWriter<Customer> itemWriter = new PropertyExtractingDelegatingItemWriter<>();
 
-		itemWriter.setTargetObject(customerService);
-		itemWriter.setTargetMethod("logCustomerAddress");
-		itemWriter.setFieldsUsedAsTargetMethodArguments(new String[] {"address", "city", "state", "zip"});
-		return itemWriter;
-	}
+
+    @Bean
+    public JmsItemReader<Customer> jmsItemReader(JmsTemplate jmsTemplate) {
+        return new JmsItemReaderBuilder<Customer>()
+                .jmsTemplate(jmsTemplate)
+                .itemType(Customer.class)
+                .build();
+    }
+
+
+    @Bean
+    public ItemWriter<Customer> basicItemWriter() {
+        return (items) -> items.forEach(System.out::println);
+    }
+
+
 }
