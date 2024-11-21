@@ -100,7 +100,8 @@ public class FlatFileItemWriterJob {
                 .names(new String[] {"firstName",
                         "lastName", "address", "city", "state", "zip"})
 //                .shouldDeleteIfEmpty(true)
-                .shouldDeleteIfExists(true)
+//                .shouldDeleteIfExists(true)
+                .append(true)
                 .build();
     }
 }
