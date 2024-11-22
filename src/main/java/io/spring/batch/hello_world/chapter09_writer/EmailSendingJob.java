@@ -30,7 +30,7 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.PlatformTransactionManager;
 
-@Configuration
+//@Configuration
 public class EmailSendingJob {
     @Autowired
     private JobRepository jobRepository;
