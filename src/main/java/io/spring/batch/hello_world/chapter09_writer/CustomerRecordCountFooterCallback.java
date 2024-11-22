@@ -11,8 +11,8 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.file.FlatFileFooterCallback;
 import org.springframework.stereotype.Component;
 
-@Component
-@Aspect
+//@Component
+//@Aspect
 public class CustomerRecordCountFooterCallback implements FlatFileFooterCallback {
 
     private int itemsWrittenInCurrentFile = 0;
